@@ -1,4 +1,4 @@
-const CACHE_NAME = "notepad-cache-v1";
+const CACHE_NAME = "notepad-cache-v20260209.1405";
 const ASSETS = ["./", "./index.html", "./sw.js"];
 
 self.addEventListener("install", (event) => {
@@ -18,7 +18,22 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") {
+    return;
+  }
+
+  const sameOrigin = new URL(event.request.url).origin === self.location.origin;
+  if (!sameOrigin) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
