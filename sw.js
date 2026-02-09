@@ -1,5 +1,5 @@
 const CACHE_NAME = "notepad-cache-v1";
-const ASSETS = ["/", "/index.html", "/sw.js"];
+const ASSETS = ["./", "./index.html", "./sw.js"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
